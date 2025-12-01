@@ -42,7 +42,6 @@ class ImpostorApp extends StatelessWidget {
 // WIDGETS DE DISEÑO (REUTILIZABLES)
 // ==========================================
 
-// Fondo con gradiente elegante
 class BackgroundGradient extends StatelessWidget {
   final Widget child;
   const BackgroundGradient({super.key, required this.child});
@@ -66,12 +65,19 @@ class BackgroundGradient extends StatelessWidget {
   }
 }
 
-// Tarjeta estilo "Cristal" (Glassmorphism)
 class GlassCard extends StatelessWidget {
   final Widget child;
   final double padding;
+  final Color? backgroundColor;
+  final Color? borderColor;
   
-  const GlassCard({super.key, required this.child, this.padding = 20.0});
+  const GlassCard({
+    super.key, 
+    required this.child, 
+    this.padding = 20.0,
+    this.backgroundColor,
+    this.borderColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +88,15 @@ class GlassCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(padding),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
+            color: backgroundColor ?? Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: Colors.white.withOpacity(0.1),
+              color: borderColor ?? Colors.white.withValues(alpha: 0.1),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               )
@@ -104,157 +110,80 @@ class GlassCard extends StatelessWidget {
 }
 
 // ==========================================
-// BASE DE DATOS DE PALABRAS (EXPANDIDA)
+// BASE DE DATOS DE PALABRAS (MEGA FUSIÓN)
 // ==========================================
 class WordDatabase {
   static final Map<String, List<String>> categories = {
-
-    // ---------------------------------------------------------
-    // 🔵 Redes & Postureo
-    // ---------------------------------------------------------
+    // --- REDES & INTERNET ---
     'Redes & Postureo': [
-      // Originales
-      'Story de Mejores Amigos', 'Shadowban', 'Blue Check (Verificado)', 'Hater', 
+      'Story de Mejores Amigos', 'Shadowban', 'Blue Check', 'Hater', 
       'Troll', 'Reel', 'TikToker', 'Unfollow', 'Stalkear', 'Fake News', 
-      'Filtro de Belleza', 'Influencer', 'Canje / Colaboración', 'Directo de Insta', 
-      'Trending Topic', 'Algoritmo', 'Feed', 'Caption', 'Selfie en el espejo', 'DM (Direct Message)',
-      // Nuevas
-      'Viral', 'Postureo extremo', 'Link en la bio', 'Reel Loop', 'Spam',
-      'Foto del gym', 'Close Friends', 'Ratio positivo', 'Cuenta Privada',
-      'Cancelado', 'FYP (For You Page)', 'Comentario fijado', 'Highlights',
-      'Face Reveal', 'Finsta',
-      // Extras
-      'Shadow Story', 'Quién vio tu perfil', 'Editar Recuerdos', 'Story Boomerang',
-      'Mensaje eliminado', 'Pantallazo', 'Follow 4 Follow', 'Engagement'
+      'Influencer', 'Canje', 'Directo', 'Trending Topic', 'Algoritmo', 
+      'Feed', 'Caption', 'Selfie', 'DM', 'Podcast', 'Viral', 'Link en Bio',
+      'Postureo extremo', 'Ratio positivo', 'Cuenta Privada', 'Highlights'
     ],
-
-    // ---------------------------------------------------------
-    // 🟣 Jerga de Internet (Twitter/X)
-    // ---------------------------------------------------------
-    'Jerga de Internet (Twitter/X)': [
-      // Originales
-      'Funado', 'Ratio', 'Basado', 'Cringe', 'Red Flag', 'Green Flag', 
-      'NPC', 'Main Character', 'Delulu', 'Gaslighting', 'Gatekeeping', 
+    'Jerga de Internet': [
+      'Funado', 'Ratio', 'Basado', 'Cringe', 'Red Flag', 'NPC', 
+      'Main Character', 'Delulu', 'Gaslighting', 'Gatekeeping', 
       'POV', 'Lore', 'Fandom', 'Shippeo', 'Meme', 'Clickbait', 
-      'Spoiler', 'Beef', 'Zasca', 'Modo Diablo', 'La Queso',
-      // Nuevas
-      'Sigma Male', 'Doomscrolling', 'Touch Grass', 'Overrated', 'Underrated',
-      'Real', 'Cap', 'No Cap', 'Wholesome', 'Fanservice', 'Plot Twist',
-      'Bait', 'Speedrun', 'Copium', 'Skill Issue',
-      // Extras
-      'NPC Walk', 'Bro Moment', 'Peak Fiction', 'Slay', 'It’s Giving',
-      'You Fell Off', 'Shadow Realm', 'Maldito el que lo lea', 'Peak'
+      'Spoiler', 'Beef', 'Zasca', 'Modo Diablo', 'La Queso', 'Fomo',
+      'Sigma Male', 'Doomscrolling', 'Touch Grass', 'Skill Issue'
     ],
-
-    // ---------------------------------------------------------
-    // ❤️‍🔥 Ligoteo & Relaciones
-    // ---------------------------------------------------------
-    'Ligoteo & Relaciones (+18 soft)': [
-      // Originales
+    
+    // --- RELACIONES & FIESTA ---
+    'Relaciones (+18 soft)': [
       'Casi Algo', 'Situationship', 'Ghosting', 'Love Bombing', 'Tinder', 
-      'Bumble', 'Grindr', 'Match', 'Friendzone', 'Sugar Daddy/Mommy', 
-      'Golden Retriever Energy', 'Ick (El asco)', 'Body Count', 'OnlyFans', 
-      'Nudes', 'Sexting', 'Stalker', 'Ex tóxico', 'Contacto Cero', 'Responsabilidad Afectiva',
-      // Nuevas
-      'Soft Launch', 'Hard Launch', 'Dry Texter', 'Pan sin sal', 'Chemistry',
-      'Cita fallida', 'Pet Names', 'Enemigos a amantes', 'Rebound',
-      'Hard Ghosting', 'Breadcrumbing', 'Casi-ex', 'Clingy',
-      // Extras
-      'Love Budget', 'Crush difícil', 'Mariposas', 'Tensión sexual no resuelta',
-      'Date improvisada', 'DM sospechoso', 'Emoji del monito', 'Beso robado'
+      'Bumble', 'Match', 'Friendzone', 'Sugar Daddy', 'Ick', 
+      'Body Count', 'OnlyFans', 'Nudes', 'Sexting', 'Ex tóxico', 
+      'Contacto Cero', 'Responsabilidad Afectiva', 'Poliamor', 'Date',
+      'Pet Names', 'Enemigos a amantes', 'Rebound', 'Breadcrumbing'
+    ],
+    'Fiesta & Noche': [
+      'Jagger', 'Vaper', 'Resaca', 'After', 'Barra Libre', 
+      'Segurata', 'Zona VIP', 'Chupito', 'Yo nunca', 'Precopa', 
+      'Perreo', 'Rave', 'Techno', 'Festival', 'Pulsera', 
+      'Uber', 'Kebab', 'Cierre de Boliche', 'Happy Hour',
+      'Botellón', 'Garrafón', 'Sala de fumadores', 'Warm Up'
     ],
 
-    // ---------------------------------------------------------
-    // 🍾 Fiesta & Vicios
-    // ---------------------------------------------------------
-    'Fiesta & Vicios': [
-      // Originales
-      'Jagger', 'Vaper', 'Resaca moral', 'After', 'Barra Libre', 
-      'El Portero/Segurata', 'VIP', 'Chupito', 'Yo nunca', 'Precopa', 
-      'Gorra de fiesta', 'Perreo', 'Rave', 'Techno', 'Festival', 
-      'Pulsera del festi', 'Uber de vuelta', 'Kebab a las 5am', 'La última y nos vamos',
-      // Nuevas
-      'Botellón', 'Resacón', 'Garrafón', 'Sala de fumadores', 'Warm Up',
-      'Lista para entrar', 'After Party', 'DJ random', 'Mojarse', 'Fiesta temática',
-      'Modo Fiesta', 'El que desaparece', 'De tranquis raros',
-      // Extras
-      'Shot Challenge', 'Amigo perdido', 'Baño lleno', 'Selfie borroso', 
-      'Confesiones de borracho', 'Beber agua obligatorio', 'Cigarrito social'
+    // --- TEMÁTICAS ESPECIALES ---
+    'Famosos & Hollywood': [
+      'Zendaya', 'Timothée Chalamet', 'Pedro Pascal', 'Jenna Ortega', 
+      'Tom Holland', 'Leonardo DiCaprio', 'Margot Robbie', 'Ryan Gosling',
+      'The Rock', 'Will Smith', 'Johnny Depp', 'Angelina Jolie', 
+      'Brad Pitt', 'Kylie Jenner', 'Kim Kardashian', 'Harry Styles'
+    ],
+    'Fútbol & Leyendas': [
+      'Messi', 'Cristiano Ronaldo', 'Mbappé', 'Haaland', 'Neymar',
+      'Vinicius Jr', 'Lewandowski', 'Balón de Oro', 'Champions League',
+      'Mundial', 'Fuera de Juego', 'VAR', 'Penalti', 'Tarjeta Roja',
+      'El Clásico', 'Chilena', 'Portero', 'Árbitro comprado', 'Hooligan'
+    ],
+    'Políticos & Salseo': [
+      'Pedro Sánchez', 'Feijóo', 'Ayuso', 'Trump', 'Biden', 'Putin',
+      'Zelenski', 'Rey Felipe', 'Reina Letizia', 'Perro Sanxe', 
+      'El Coletas', 'Moción de Censura', 'Elecciones', 'Urnas', 'Ministro'
+    ],
+    'Moda & Ropa Íntima': [
+      'Tanga', 'Boxer', 'Lencería de encaje', 'Sujetador Push-up', 'Corsé',
+      'Calcetines con sandalias', 'Crop Top', 'Oversize', 'Pitillos',
+      'Chándal de táctel', 'Tacones de aguja', 'Bikini', 'Bañador slip',
+      'Pijama de abuela', 'Calzoncillos de la suerte', 'Picardías'
+    ],
+    'Insultos & Expresiones': [
+      'Bocachancla', 'Pagafantas', 'Pringado', 'Fantasma', 'Flipado',
+      'Cuñado', 'Calzonazos', 'Vividor', 'Lameculos', 'Cuerneador',
+      'Aguafiestas', 'Bienqueda', 'Listillo', 'Marrullero', 'Sieso'
     ],
 
-    // ---------------------------------------------------------
-    // 🌟 Cultura Pop & Actualidad
-    // ---------------------------------------------------------
-    'Cultura Pop & Actualidad': [
-      // Originales
-      'Ibai', 'Kings League', 'La Velada', 'Taylor Swift', 'Motomami', 
-      'Bizarrap', 'Inteligencia Artificial', 'Crypto Bro', 'Gymbro', 'Aesthetic', 
-      'Coquette', 'Milipili', 'Cayetana', 'Trap', 'Reggaeton', 
-      'Horóscopo', 'Mercurio Retrógrado', 'Terapia', 'Ansiedad Social',
-      // Nuevas
-      'Shakira Session', 'Met Gala', 'Viral Challenge', 'It Girl',
-      'NPC Streamer', 'Cancel Culture', 'Filtro Wes Anderson',
-      'Anime enjoyer', 'Boomer', 'Resubido por TikTok',
-      // Extras
-      'Barbiecore', 'Oppenheimer Vibes', 'Cine de autor',
-      'Spotify Wrapped', 'Marvel Fan', 'Series del momento'
+    // --- ESTILO DE VIDA & HOBBIES (Fusionados) ---
+    'Deportes & Gym': [
+      'Crossfit', 'Burpee', 'Agujetas', 'Proteína', 'Creatina',
+      'Press Banca', 'Sentadilla', 'Yoga', 'Pilates', 'Padel',
+      'Tenis', 'Baloncesto', 'Natación', 'Formula 1', 'MotoGP',
+      'Dopaje', 'Maratón', 'Ironman', 'PR (Personal Record)', 'Spotter',
+      'Día de pierna', 'Pre-entreno', 'Calistenia', 'Peso muerto'
     ],
-
-    // ---------------------------------------------------------
-    // 🟡 Situaciones Random
-    // ---------------------------------------------------------
-    'Situaciones Random': [
-      // Originales
-      'Tarjeta Denegada', 'Batería al 1%', 'Modo Avión', 'Grupo de WhatsApp sin el pesado', 
-      'Audio de 5 minutos', 'Sticker', 'Bizum', 'Pedir perdón', 
-      'Llegar tarde', 'Dejar en visto', 'Llamada perdida', 'Hacer la croqueta',
-      // Nuevas
-      'Cola infinita', 'No hay wifi', 'GPS fallando', 'Mini-infarto bancario',
-      'Móvil en la cara', 'Grabar sin querer', 'Despertarse antes de la alarma',
-      'Ropa en la silla', 'Foto mala subida', 'Quedarse sin papel',
-      'Ascensor ocupado',
-      // Extras
-      'Ducha sin agua caliente', 'Llaves perdidas', 'Corte de luz', 'Ventana abierta lloviendo',
-      'Se cae la compra', 'Mancharte comiendo', 'Abrir mal un paquete'
-    ],
-
-    // ---------------------------------------------------------
-    // 🧃 NUEVA: Comida & Planes
-    // ---------------------------------------------------------
-    'Comida & Planes': [
-      'Brunch', 'Poké Bowl', 'Comida fit', 'Cheat Meal', 'Delivery', 'Glovo', 
-      'Café aesthetic', 'Smash Burger', 'Food Porn', 'Merendola', 'Tupper de mamá',
-      'Pizza del domingo', 'Menú del día', 'Postre obligatorio', 'Tarta Lotus', 
-      'Mesa compartida', 'Mojito sin alcohol', 'Buffet libre', 'Restaurante nuevo',
-      'Cena improvisada', 'Helado artesanal', 'Patatas deluxe'
-    ],
-
-    // ---------------------------------------------------------
-    // 🤓 NUEVA: Universidad & Estudiante
-    // ---------------------------------------------------------
-    'Universidad & Estudiante': [
-      'Trabajo en grupo', 'Copiar en el examen', 'Apuntes prestados', 'Clase online',
-      'PDF de 200 páginas', 'Estudiar la noche antes', 'Aula fría', 'Aula caliente',
-      'Biblio', 'Moodle', 'Ansiedad pre-examen', 'Parcial sorpresa',
-      'Suspenso colectivo', 'Examen tipo test', 'Semana de recuperación',
-      'Memorizar a muerte', 'Trabajo final', 'Profe borde', 'Tareas acumuladas',
-      'Grupo sin aportar', 'Clase cancelada'
-    ],
-
-    // ---------------------------------------------------------
-    // 👟 NUEVA: Gym & Fitness
-    // ---------------------------------------------------------
-    'Gym & Fitness': [
-      'PR', 'Series al fallo', 'Spotter', 'Hip Thrust', 'Pump', 'RPE',
-      'Día de pierna', 'Crossfit', 'Prote shake', 'Rutina full body',
-      'Pre-entreno', 'Cinturón de powerlifting', 'Calistenia', 'Peso muerto',
-      'Dead Hang', 'Sudar mucho', 'Gente grabando', 'Progreso lineal',
-      'Fallo técnico', 'Máquina ocupada', 'Cardio infinito'
-    ],
-
-    // ---------------------------------------------------------
-    // 🎮 NUEVA: Videojuegos & Streaming
-    // ---------------------------------------------------------
     'Videojuegos & Streaming': [
       'Lag', 'Ping alto', 'Camper', 'Tryhard', 'Streamer', 'Skin legendaria',
       'Battle Pass', 'Meta roto', 'Game Over', 'NPC glitch', 
@@ -262,79 +191,52 @@ class WordDatabase {
       'Ragequit', 'Servidor caído', 'Chat tóxico', 'OP', 'Clutch',
       'Buff', 'Nerf', 'DLC'
     ],
-
-    // ---------------------------------------------------------
-    // 🚗 NUEVA: Vida Cotidiana
-    // ---------------------------------------------------------
-    'Vida Cotidiana': [
-      'Tráfico infernal', 'Bus lleno', 'Pedir turno', 'Super lleno',
-      'Lavadora rota', 'Despertador fallando', 'Luz cara', 'Ruido del vecino',
-      'Paquete retrasado', 'Dormir mal', 'Día gris', 'Tarde eterna',
-      'Plan cancelado', 'Mucho calor', 'Mucho frío', 'Olor raro en casa',
-      'Cita en el médico', 'Sacar al perro', 'Tarde de sofá', 'Fregar platos'
+    'Comida & Planes': [
+      'Brunch', 'Poké Bowl', 'Comida fit', 'Cheat Meal', 'Delivery', 'Glovo', 
+      'Café aesthetic', 'Smash Burger', 'Food Porn', 'Merendola', 'Tupper de mamá',
+      'Pizza del domingo', 'Menú del día', 'Postre obligatorio', 'Tarta Lotus', 
+      'Mesa compartida', 'Mojito sin alcohol', 'Buffet libre'
     ],
-        // ---------------------------------------------------------
-    // 🧠 Ingeniería de Datos & IA (Tu carrera universitaria)
-    // ---------------------------------------------------------
+    'Vida Diaria & Random': [
+      'Tarjeta Denegada', 'Batería 1%', 'Modo Avión', 'Grupo WhatsApp', 
+      'Audio Infinito', 'Sticker', 'Bizum', 'Llegar Tarde', 
+      'Visto', 'Llamada Perdida', 'Hacer la croqueta', 'No hay wifi',
+      'GPS fallando', 'Mini-infarto bancario', 'Móvil en la cara',
+      'Despertarse antes de la alarma', 'Ascensor ocupado'
+    ],
+    'Cultura Pop': [
+      'Ibai', 'Kings League', 'La Velada', 'Taylor Swift', 'Motomami', 
+      'Bizarrap', 'Inteligencia Artificial', 'Crypto', 'Gymbro', 'Aesthetic', 
+      'Coquette', 'Milipili', 'Trap', 'Reggaeton', 'Horóscopo',
+      'Shakira Session', 'Met Gala', 'Barbiecore', 'Oppenheimer Vibes'
+    ],
+
+    // --- ACADÉMICO & PRO ---
+    'Universidad & Estudiante': [
+      'Trabajo en grupo', 'Copiar en el examen', 'Apuntes prestados', 'Clase online',
+      'PDF de 200 páginas', 'Estudiar la noche antes', 'Aula fría', 'Aula caliente',
+      'Biblio', 'Moodle', 'Ansiedad pre-examen', 'Parcial sorpresa',
+      'Suspenso colectivo', 'Examen tipo test', 'Semana de recuperación',
+      'Memorizar a muerte', 'Trabajo final', 'Profe borde'
+    ],
     'Ingeniería de Datos & IA': [
-      // Aprendizaje Automático
-      'Overfitting', 'Underfitting', 'Regularización', 'Gradiente Descendente',
-      'Backpropagation', 'KNN', 'SVM', 'Árboles de Decisión', 'Random Forest',
-      'Curva ROC', 'Cross Validation', 'Train/Test Split', 'Feature Scaling',
-      'One-Hot Encoding', 'Pérdida MSE', 'Learning Rate', 'Batch Size',
-
-      // Inferencia Estadística
-      'Estimador insesgado', 'Varianza mínima', 'Muestreo', 'MLE',
-      'Intervalo de Confianza', 'p-valor', 'Hipótesis Nula', 'Test Z',
-      'Test t', 'Error Tipo I', 'Error Tipo II', 'Distribución Normal',
-      'Distribución Exponencial', 'Asintótico', 'Consistencia',
-
-      // Series Temporales
-      'ARIMA', 'Autocorrelación', 'Ruido blanco', 'Suavizado Exponencial',
-      'Estacionalidad', 'Tendencia', 'Lag', 'Ventana deslizante',
-      'Modelo predictivo', 'Forecast',
-
-      // Big Data & Computación en la Nube
-      'Spark', 'Hadoop', 'MapReduce', 'Cluster', 'Kubernetes', 'Docker',
-      'Data Lake', 'ETL', 'Pipeline', 'Notebook', 'Databricks',
-      'Paralelización', 'GPU Computing', 'Escalabilidad',
-
-      // Bases de Datos
-      'SQL', 'NoSQL', 'CRUD', 'Índices', 'JOIN', 'Sharding', 'Replicación',
-      'Transacciones', 'Normalización', 'Esquema', 'MongoDB',
-      'JSON Schema', 'XML Schema',
-
-      // Probabilidad & Señales Aleatorias
-      'Proceso Estocástico', 'Señal Determinista', 'Esperanza Matemática',
-      'Varianza', 'Autocovarianza', 'Densidad Espectral', 'Ruido Gaussiano',
-      'Ley de los Grandes Números', 'Teorema Central del Límite',
-
-      // Programación para Big Data
-      'Clustering', 'K-Means', 'EDA (Exploratory Data Analysis)',
-      'Outliers', 'Data Cleaning', 'Visualización', 'Correlación',
-      'Colinealidad', 'Regresión Lineal Múltiple',
-
-      // Teoría de la Información
-      'Entropía', 'Información Mutua', 'Canal de Comunicación',
-      'Capacidad del Canal', 'Ruido', 'Codificación Óptima',
-
-      // Ingeniería y Sistemas de Datos
-      'Modelado de Datos', 'Arquitectura de Sistemas',
-      'Escalado Horizontal', 'Latencia', 'Tolerancia a Fallos',
-      'Monitorización', 'Logs', 'APIs', 'Microservicios',
-      'Data Warehouse', 'Batch vs Streaming',
-
-      // Extras de tu perfil
-      'Práctica de laboratorio', 'Memoria del proyecto', 'Notebook Jupyter',
-      'Datasets', 'Carga de trabajo', 'Optimizaciones'
+      'Overfitting', 'Underfitting', 'Gradiente Descendente', 'Backpropagation',
+      'KNN', 'Árboles de Decisión', 'Random Forest', 'Curva ROC', 
+      'Train/Test Split', 'One-Hot Encoding', 'Batch Size', 'Estimador insesgado',
+      'p-valor', 'Hipótesis Nula', 'Distribución Normal', 'ARIMA', 
+      'Spark', 'Hadoop', 'Kubernetes', 'Docker', 'SQL', 'NoSQL', 'JOIN',
+      'K-Means', 'Entropía', 'Microservicios', 'APIs'
     ],
-
   };
 
-
-  static List<String> getAllWords() {
+  // Método para filtrar categorías
+  static List<String> getWordsForCategories(Set<String> selectedCategories) {
     List<String> all = [];
-    categories.values.forEach((list) => all.addAll(list));
+    categories.forEach((key, list) {
+      if (selectedCategories.contains(key)) {
+        all.addAll(list);
+      }
+    });
     return all;
   }
 }
@@ -352,10 +254,39 @@ class SetupScreen extends StatefulWidget {
 class _SetupScreenState extends State<SetupScreen> {
   double _players = 5;
   double _impostors = 1;
+  
+  // Estado para las categorías seleccionadas (todas activas por defecto)
+  late Set<String> _selectedCategories;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategories = Set.from(WordDatabase.categories.keys);
+  }
+
+  void _toggleCategory(String category) {
+    setState(() {
+      if (_selectedCategories.contains(category)) {
+        _selectedCategories.remove(category);
+      } else {
+        _selectedCategories.add(category);
+      }
+    });
+  }
 
   void _startGame() {
-    final allWords = WordDatabase.getAllWords();
-    final randomWord = allWords[Random().nextInt(allWords.length)];
+    if (_selectedCategories.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Selecciona al menos una categoría"),
+          backgroundColor: Color(0xFFEC4899),
+        ),
+      );
+      return;
+    }
+
+    final validWords = WordDatabase.getWordsForCategories(_selectedCategories);
+    final randomWord = validWords[Random().nextInt(validWords.length)];
 
     int playerCount = _players.toInt();
     int impostorCount = _impostors.toInt();
@@ -383,76 +314,140 @@ class _SetupScreenState extends State<SetupScreen> {
     return Scaffold(
       body: BackgroundGradient(
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Spacer(),
-                const Text(
-                  "EL IMPOSTOR",
-                  style: TextStyle(
-                    fontSize: 42, 
-                    fontWeight: FontWeight.w900, 
-                    color: Colors.white,
-                    letterSpacing: 3,
-                  ),
-                ),
-                const Text(
-                  "EDICIÓN DEFINITIVA",
-                  style: TextStyle(
-                    fontSize: 14, 
-                    fontWeight: FontWeight.w300, 
-                    color: Color(0xFF6366F1),
-                    letterSpacing: 6,
-                  ),
-                ),
-                const Spacer(),
-                
-                // Configuración de Jugadores
-                GlassCard(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSliderRow(
-                        title: "JUGADORES",
-                        value: _players,
-                        min: 3, max: 20,
-                        accentColor: const Color(0xFF6366F1),
-                        onChanged: (v) => setState(() => _players = v),
+                      const SizedBox(height: 20),
+                      const Center(
+                        child: Text(
+                          "EL IMPOSTOR",
+                          style: TextStyle(
+                            fontSize: 42, 
+                            fontWeight: FontWeight.w900, 
+                            color: Colors.white,
+                            letterSpacing: 3,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 20),
-                      Divider(color: Colors.white.withOpacity(0.1)),
-                      const SizedBox(height: 20),
-                      _buildSliderRow(
-                        title: "IMPOSTORES",
-                        value: _impostors,
-                        min: 1, 
-                        max: (_players - 1 > 1) ? _players - 1 : 1,
-                        accentColor: const Color(0xFFEC4899),
-                        onChanged: (v) => setState(() => _impostors = v),
+                      const Center(
+                        child: Text(
+                          "CONFIGURACIÓN",
+                          style: TextStyle(
+                            fontSize: 14, 
+                            fontWeight: FontWeight.w300, 
+                            color: Color(0xFF6366F1),
+                            letterSpacing: 6,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      
+                      // Configuración de Jugadores
+                      GlassCard(
+                        child: Column(
+                          children: [
+                            _buildSliderRow(
+                              title: "JUGADORES",
+                              value: _players,
+                              min: 3, max: 20,
+                              accentColor: const Color(0xFF6366F1),
+                              onChanged: (v) => setState(() => _players = v),
+                            ),
+                            const SizedBox(height: 20),
+                            Divider(color: Colors.white.withValues(alpha: 0.1)),
+                            const SizedBox(height: 20),
+                            _buildSliderRow(
+                              title: "IMPOSTORES",
+                              value: _impostors,
+                              min: 1, 
+                              max: (_players - 1 > 1) ? _players - 1 : 1,
+                              accentColor: const Color(0xFFEC4899),
+                              onChanged: (v) => setState(() => _impostors = v),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+                      
+                      const Text(
+                        "CATEGORÍAS",
+                        style: TextStyle(color: Colors.white70, letterSpacing: 1.5, fontSize: 12),
+                      ),
+                      const SizedBox(height: 10),
+                      
+                      // Selector de Categorías (Chips)
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: WordDatabase.categories.keys.map((category) {
+                          final isSelected = _selectedCategories.contains(category);
+                          return GestureDetector(
+                            onTap: () => _toggleCategory(category),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isSelected 
+                                    ? const Color(0xFF6366F1).withValues(alpha: 0.3) 
+                                    : Colors.white.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: isSelected 
+                                      ? const Color(0xFF6366F1) 
+                                      : Colors.white.withValues(alpha: 0.1),
+                                  width: 1.5,
+                                ),
+                                boxShadow: isSelected ? [
+                                  BoxShadow(
+                                    color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  )
+                                ] : [],
+                              ),
+                              child: Text(
+                                category,
+                                style: TextStyle(
+                                  color: isSelected ? Colors.white : Colors.white60,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
                 ),
-                
-                const Spacer(),
-
-                // Botón Iniciar con estilo Gradient
-                Container(
+              ),
+              
+              // Botón Iniciar (Fijo abajo)
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Container(
                   width: double.infinity,
                   height: 65,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF6366F1), Color(0xFFEC4899)],
+                    gradient: LinearGradient(
+                      colors: _selectedCategories.isNotEmpty 
+                        ? [const Color(0xFF6366F1), const Color(0xFFEC4899)]
+                        : [Colors.grey, Colors.grey.shade700],
                     ),
-                    boxShadow: [
+                    boxShadow: _selectedCategories.isNotEmpty ? [
                       BoxShadow(
-                        color: const Color(0xFF6366F1).withOpacity(0.4),
+                        color: const Color(0xFF6366F1).withValues(alpha: 0.4),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       )
-                    ],
+                    ] : [],
                   ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -467,9 +462,8 @@ class _SetupScreenState extends State<SetupScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -500,11 +494,11 @@ class _SetupScreenState extends State<SetupScreen> {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: accentColor,
-            inactiveTrackColor: accentColor.withOpacity(0.2),
+            inactiveTrackColor: accentColor.withValues(alpha: 0.2),
             thumbColor: Colors.white,
             trackHeight: 4,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-            overlayColor: accentColor.withOpacity(0.2),
+            overlayColor: accentColor.withValues(alpha: 0.2),
           ),
           child: Slider(
             value: value,
@@ -630,7 +624,7 @@ class _GameScreenState extends State<GameScreen> {
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
-                        side: _isRevealed ? BorderSide(color: Colors.white.withOpacity(0.2)) : BorderSide.none,
+                        side: _isRevealed ? BorderSide(color: Colors.white.withValues(alpha: 0.2)) : BorderSide.none,
                       ),
                     ),
                     onPressed: _nextStep,
@@ -661,8 +655,8 @@ class _GameScreenState extends State<GameScreen> {
               padding: const EdgeInsets.all(25),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.05),
-                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                color: Colors.white.withValues(alpha: 0.05),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
               child: const Icon(Icons.fingerprint, size: 60, color: Color(0xFF6366F1)),
             ),
@@ -675,7 +669,7 @@ class _GameScreenState extends State<GameScreen> {
             Text(
               "Asegúrate de que nadie más esté mirando la pantalla.",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.6), height: 1.5),
+              style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.6), height: 1.5),
             ),
           ],
         ),
@@ -696,9 +690,9 @@ class _GameScreenState extends State<GameScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: color.withOpacity(0.5)),
+                border: Border.all(color: color.withValues(alpha: 0.5)),
               ),
               child: Text(
                 isImpostor ? "OBJETIVO" : "CLAVE",
@@ -715,7 +709,7 @@ class _GameScreenState extends State<GameScreen> {
                 color: Colors.white,
                 letterSpacing: 1.5,
                 shadows: [
-                  Shadow(color: color.withOpacity(0.6), blurRadius: 20)
+                  Shadow(color: color.withValues(alpha: 0.6), blurRadius: 20)
                 ]
               ),
             ),
