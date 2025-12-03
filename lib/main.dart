@@ -1,7 +1,9 @@
+import 'dart:convert'; // Para convertir datos a JSON
 import 'dart:math';
 import 'dart:ui'; // Necesario para el efecto Glassmorphism
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Para guardar datos en el móvil
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -35,6 +37,48 @@ class ImpostorApp extends StatelessWidget {
       ),
       home: const SetupScreen(),
     );
+  }
+}
+
+// ==========================================
+// GESTOR DE DATOS (NUEVO: Para guardar tus categorías)
+// ==========================================
+class DataManager {
+  static const String _customCategoriesKey = 'custom_categories_v1';
+
+  // Cargar categorías guardadas
+  static Future<Map<String, List<String>>> loadCustomCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? storedData = prefs.getString(_customCategoriesKey);
+    
+    if (storedData == null) return {};
+
+    try {
+      Map<String, dynamic> decoded = jsonDecode(storedData);
+      Map<String, List<String>> result = {};
+      decoded.forEach((key, value) {
+        result[key] = List<String>.from(value);
+      });
+      return result;
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Guardar nueva categoría
+  static Future<void> saveCategory(String name, List<String> words) async {
+    final prefs = await SharedPreferences.getInstance();
+    Map<String, List<String>> current = await loadCustomCategories();
+    current[name] = words;
+    await prefs.setString(_customCategoriesKey, jsonEncode(current));
+  }
+
+  // Borrar categoría
+  static Future<void> deleteCategory(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    Map<String, List<String>> current = await loadCustomCategories();
+    current.remove(name);
+    await prefs.setString(_customCategoriesKey, jsonEncode(current));
   }
 }
 
@@ -110,139 +154,240 @@ class GlassCard extends StatelessWidget {
 }
 
 // ==========================================
-// BASE DE DATOS DE PALABRAS (MEGA FUSIÓN)
+// BASE DE DATOS DE PALABRAS (TU LISTA COMPLETA)
 // ==========================================
 class WordDatabase {
   static final Map<String, List<String>> categories = {
     // --- REDES & INTERNET ---
     'Redes & Postureo': [
-      'Story de Mejores Amigos', 'Shadowban', 'Blue Check', 'Hater', 
-      'Troll', 'Reel', 'TikToker', 'Unfollow', 'Stalkear', 'Fake News', 
-      'Influencer', 'Canje', 'Directo', 'Trending Topic', 'Algoritmo', 
-      'Feed', 'Caption', 'Selfie', 'DM', 'Podcast', 'Viral', 'Link en Bio',
-      'Postureo extremo', 'Ratio positivo', 'Cuenta Privada', 'Highlights'
+      'Story de Mejores Amigos', 'Hater', 'Troll', 'Reel', 
+      'TikToker', 'Unfollow', 'Stalkear', 'Fake News', 
+      'Influencer', 'Directo', 'Trending Topic', 
+      'Feed', 'Selfie', 'DM', 'Podcast', 'Viral',
+      'Postureo', 'Highlights', 'Like a la histoia' 
     ],
     'Jerga de Internet': [
-      'Funado', 'Ratio', 'Basado', 'Cringe', 'Red Flag', 'NPC', 
-      'Main Character', 'Delulu', 'Gaslighting', 'Gatekeeping', 
-      'POV', 'Lore', 'Fandom', 'Shippeo', 'Meme', 'Clickbait', 
-      'Spoiler', 'Beef', 'Zasca', 'Modo Diablo', 'La Queso', 'Fomo',
-      'Sigma Male', 'Doomscrolling', 'Touch Grass', 'Skill Issue'
+      'Funado',  'Basado', 'Cringe', 'Red Flag', 'NPC', 
+      'Main Character', 'POV', 'Lore', 'Shippeo', 'Meme', 'Clickbait', 
+      'Spoiler', 'Beef', 'Zasca', 'Modo Diablo', 'Fomo',
+      'Sigma', '67', 'Simp', 'Virgen'
     ],
     
     // --- RELACIONES & FIESTA ---
     'Relaciones (+18 soft)': [
-      'Casi Algo', 'Situationship', 'Ghosting', 'Love Bombing', 'Tinder', 
-      'Bumble', 'Match', 'Friendzone', 'Sugar Daddy', 'Ick', 
+      'Casi Algo', 'Ghosting', 'Tinder', 'Grinder',
+      'Friendzone', 'Sugar Daddy',
       'Body Count', 'OnlyFans', 'Nudes', 'Sexting', 'Ex tóxico', 
-      'Contacto Cero', 'Responsabilidad Afectiva', 'Poliamor', 'Date',
-      'Pet Names', 'Enemigos a amantes', 'Rebound', 'Breadcrumbing'
+      'Contacto Cero', 'Responsabilidad Afectiva', 'Poliamor',
+      'Amantes', 'A Cuatro', 'Rollos de una noche', 'Pene 20cm',
+      'Guarrindonga', 'Bisexual', 'Putero', 'Lechazo', 'Baños',
+      'Coño Peludo', 'Trío', 'Tetazas', 'Paja', 'Cuernos', 'Infiel'
     ],
     'Fiesta & Noche': [
       'Jagger', 'Vaper', 'Resaca', 'After', 'Barra Libre', 
-      'Segurata', 'Zona VIP', 'Chupito', 'Yo nunca', 'Precopa', 
+      'Segurata', 'Zona VIP', 'Chupito',
       'Perreo', 'Rave', 'Techno', 'Festival', 'Pulsera', 
-      'Uber', 'Kebab', 'Cierre de Boliche', 'Happy Hour',
-      'Botellón', 'Garrafón', 'Sala de fumadores', 'Warm Up'
+      'Uber', 'Kebab','Botellón', 'Garrafón', 'Barceló',
+      'Mamada', 'Amego Segarro', 'Cubata', 'Marihuana', 'Fentanilo',
+      'Nuit', 'Vomitar', 'Guarreo en el parque de Nuit'
     ],
 
     // --- TEMÁTICAS ESPECIALES ---
     'Famosos & Hollywood': [
-      'Zendaya', 'Timothée Chalamet', 'Pedro Pascal', 'Jenna Ortega', 
-      'Tom Holland', 'Leonardo DiCaprio', 'Margot Robbie', 'Ryan Gosling',
+      'Zendaya', 'Lana Rohades', 'Leonardo DiCaprio', 'Margot Robbie',
       'The Rock', 'Will Smith', 'Johnny Depp', 'Angelina Jolie', 
-      'Brad Pitt', 'Kylie Jenner', 'Kim Kardashian', 'Harry Styles'
+      'Brad Pitt', 'Kylie Jenner', 'Kim Kardashian', 'Harry Styles',
+      'Aitana','Quevedo','Rosalía','BadBunny', 'Jordi ENP',
+      'Rafa Nadal'
     ],
-    'Fútbol & Leyendas': [
-      'Messi', 'Cristiano Ronaldo', 'Mbappé', 'Haaland', 'Neymar',
-      'Vinicius Jr', 'Lewandowski', 'Balón de Oro', 'Champions League',
-      'Mundial', 'Fuera de Juego', 'VAR', 'Penalti', 'Tarjeta Roja',
-      'El Clásico', 'Chilena', 'Portero', 'Árbitro comprado', 'Hooligan'
+      'Fútbol & Leyendas': [
+    // Jugadores históricos
+    'Pelé', 'Maradona', 'Johan Cruyff', 'Franz Beckenbauer', 'Alfredo Di Stéfano',
+      'Ronaldo Nazário', 'Ronaldinho', 'Zidane', 'Paolo Maldini', 'Roberto Carlos',
+      'George Best', 'Eusebio', 'Bobby Charlton', 'Xavi', 'Iniesta', 'Garrincha',
+      'Marco van Basten', 'Gerd Müller', 'Romário', 'Batistuta', 'Totti', 'Henry',
+      'Raúl González', 'Buffon', 'Iker Casillas',
+
+  // Jugadores actuales top
+      'Messi', 'Cristiano Ronaldo', 'Mbappé', 'Haaland', 'Neymar', 'Vinicius Jr',
+      'Lewandowski', 'Kane', 'Salah', 'Benzema', 'Modric', 'De Bruyne', 'Griezmann',
+      'Kvaratskhelia', 'Rodri', 'Pedri', 'Gavi', 'Bellingham', 'Son Heung-min',
+      'Bruno Fernandes', 'João Félix', 'Valverde', 'Odegaard', 'Ter Stegen',
+      'Courtois', 'Enzo Fernández', 'Endrick', 'Lautaro Martínez',
+
+  // Equipos europeos
+      'Real Madrid', 'FC Barcelona', 'Atlético de Madrid', 'Sevilla FC',
+      'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Arsenal',
+      'Tottenham', 'Bayern de Múnich', 'Borussia Dortmund', 'PSG', 'Olympique Lyon',
+      'Olympique de Marsella', 'Juventus', 'Inter de Milán', 'AC Milan', 'Roma',
+      'Napoli', 'Ajax', 'PSV Eindhoven', 'Benfica', 'Porto',
+
+  // Equipos sudamericanos
+      'Boca Juniors', 'River Plate', 'Flamengo', 'Palmeiras', 'Corinthians',
+      'Santos FC', 'São Paulo', 'Colo-Colo', 'Peñarol', 'Nacional',
+
+  // Selecciones
+      'España', 'Brasil', 'Argentina', 'Francia', 'Alemania', 'Italia', 'Inglaterra',
+      'Portugal', 'Países Bajos', 'Uruguay', 'Croacia', 'Bélgica', 
+      'Colombia', 'Chile', 'México',
+
+  // Términos del fútbol
+      'Balón de Oro', 'Champions League', 'Europa League', 'Mundial',
+      'Eurocopa', 'Copa América', 'Fuera de Juego', 'VAR', 'Penalti',
+      'Tarjeta Roja', 'Tarjeta Amarilla', 'Corner', 'Falta', 'Golazo',
+      'Hat-Trick', 'Chilena', 'Rabona', 'Tiki-Taka', 'Contraataque',
+      'Clásico', 'Derbi', 'Remontada', 'Portero', 'Extremo', 'Central',
+      'Delantero Centro', 'Árbitro comprado', 'Negreira'
+
     ],
     'Políticos & Salseo': [
-      'Pedro Sánchez', 'Feijóo', 'Ayuso', 'Trump', 'Biden', 'Putin',
+      'Feijóo', 'Ayuso', 'Trump', 'Biden', 'Putin',
       'Zelenski', 'Rey Felipe', 'Reina Letizia', 'Perro Sanxe', 
-      'El Coletas', 'Moción de Censura', 'Elecciones', 'Urnas', 'Ministro'
+      'El Coletas', 'Errejón' , 'Irene Montero','Mazón',
+      'Ábalos', 'Vito Quiles', 'Gabriel Rufián', 'Jorge Javier',
+      'ZonaGemelos'
     ],
     'Moda & Ropa Íntima': [
-      'Tanga', 'Boxer', 'Lencería de encaje', 'Sujetador Push-up', 'Corsé',
-      'Calcetines con sandalias', 'Crop Top', 'Oversize', 'Pitillos',
-      'Chándal de táctel', 'Tacones de aguja', 'Bikini', 'Bañador slip',
-      'Pijama de abuela', 'Calzoncillos de la suerte', 'Picardías'
+      'Tanga', 'Boxer', 'Desnudo', 'Sujetador Push-up', 'Oversize', 'Pitillos',
+      'Chándal', 'Tacones', 'Bikini', 'Vestido corto' , 'Minifalda', 'Escote'
     ],
     'Insultos & Expresiones': [
       'Bocachancla', 'Pagafantas', 'Pringado', 'Fantasma', 'Flipado',
-      'Cuñado', 'Calzonazos', 'Vividor', 'Lameculos', 'Cuerneador',
-      'Aguafiestas', 'Bienqueda', 'Listillo', 'Marrullero', 'Sieso'
+      'Cuñado', 'Calzonazos', 'Vividor', 'Lameculos',
+      'Aguafiestas', 'Bienqueda', 'Marronero', 'Perroflauta',' Cayetano',
+      'Pija', 'Choni'
     ],
 
     // --- ESTILO DE VIDA & HOBBIES (Fusionados) ---
     'Deportes & Gym': [
-      'Crossfit', 'Burpee', 'Agujetas', 'Proteína', 'Creatina',
+      'Burpee', 'Agujetas', 'Proteína', 'Creatina',
       'Press Banca', 'Sentadilla', 'Yoga', 'Pilates', 'Padel',
       'Tenis', 'Baloncesto', 'Natación', 'Formula 1', 'MotoGP',
-      'Dopaje', 'Maratón', 'Ironman', 'PR (Personal Record)', 'Spotter',
-      'Día de pierna', 'Pre-entreno', 'Calistenia', 'Peso muerto'
+      'Dopaje', 'Maratón', 'Ironman', 'PR (Personal Record)', 
+      'Día de pierna', 'Pre-entreno'
     ],
     'Videojuegos & Streaming': [
-      'Lag', 'Ping alto', 'Camper', 'Tryhard', 'Streamer', 'Skin legendaria',
-      'Battle Pass', 'Meta roto', 'Game Over', 'NPC glitch', 
-      'Loot', 'Speedrun', 'Coop', 'Noob', 'Pro Player', 
-      'Ragequit', 'Servidor caído', 'Chat tóxico', 'OP', 'Clutch',
-      'Buff', 'Nerf', 'DLC'
+      'Tryhard', 'Streamer', 'Skin legendaria',
+      'Speedrun', 'Noob', 'Pro Player',
+      'Buff', 'Nerf', 
     ],
     'Comida & Planes': [
-      'Brunch', 'Poké Bowl', 'Comida fit', 'Cheat Meal', 'Delivery', 'Glovo', 
-      'Café aesthetic', 'Smash Burger', 'Food Porn', 'Merendola', 'Tupper de mamá',
-      'Pizza del domingo', 'Menú del día', 'Postre obligatorio', 'Tarta Lotus', 
-      'Mesa compartida', 'Mojito sin alcohol', 'Buffet libre'
+      'Glovo', 'Café', 'Smash Burger', 'Merendola', 'Tupper',
+      'Pizza', 'Menú del día', 'Postre', 'Tarta', 
+      'Mesa', 'Mojito', 'Buffet', 'RonCola'
     ],
     'Vida Diaria & Random': [
       'Tarjeta Denegada', 'Batería 1%', 'Modo Avión', 'Grupo WhatsApp', 
       'Audio Infinito', 'Sticker', 'Bizum', 'Llegar Tarde', 
-      'Visto', 'Llamada Perdida', 'Hacer la croqueta', 'No hay wifi',
-      'GPS fallando', 'Mini-infarto bancario', 'Móvil en la cara',
-      'Despertarse antes de la alarma', 'Ascensor ocupado'
+      'Visto', 'Llamada Perdida', 'Hacer la croqueta', 'Wifi'
     ],
     'Cultura Pop': [
       'Ibai', 'Kings League', 'La Velada', 'Taylor Swift', 'Motomami', 
       'Bizarrap', 'Inteligencia Artificial', 'Crypto', 'Gymbro', 'Aesthetic', 
-      'Coquette', 'Milipili', 'Trap', 'Reggaeton', 'Horóscopo',
-      'Shakira Session', 'Met Gala', 'Barbiecore', 'Oppenheimer Vibes'
+      'Coquette', 'Trap', 'Reggaeton', 'Horóscopo',
+      'Shakira', 'Oppenheimer'
     ],
 
     // --- ACADÉMICO & PRO ---
     'Universidad & Estudiante': [
       'Trabajo en grupo', 'Copiar en el examen', 'Apuntes prestados', 'Clase online',
-      'PDF de 200 páginas', 'Estudiar la noche antes', 'Aula fría', 'Aula caliente',
-      'Biblio', 'Moodle', 'Ansiedad pre-examen', 'Parcial sorpresa',
-      'Suspenso colectivo', 'Examen tipo test', 'Semana de recuperación',
-      'Memorizar a muerte', 'Trabajo final', 'Profe borde'
+      'PDF de 200 páginas', 'Estudiar la noche antes', 
+      'Biblio', 'Moodle', 'Ansiedad pre-examen', 'Parcial',
+      'Suspenso colectivo', 'Examen tipo test', 'Recuperación',
+      'Memorizar', 'Trabajo final', 'Profe gilipollas', 'Buen Profesor'
     ],
     'Ingeniería de Datos & IA': [
-      'Overfitting', 'Underfitting', 'Gradiente Descendente', 'Backpropagation',
-      'KNN', 'Árboles de Decisión', 'Random Forest', 'Curva ROC', 
-      'Train/Test Split', 'One-Hot Encoding', 'Batch Size', 'Estimador insesgado',
-      'p-valor', 'Hipótesis Nula', 'Distribución Normal', 'ARIMA', 
-      'Spark', 'Hadoop', 'Kubernetes', 'Docker', 'SQL', 'NoSQL', 'JOIN',
-      'K-Means', 'Entropía', 'Microservicios', 'APIs'
+      'Overfitting', 'KNN', 'Árboles de Decisión', 
+      'p-valor',  'Kubernetes', 'Docker', 'SQL',
+      'K-Means', 'Entropía', 'APIs', 'Alcolea Ratón', 'Alcoputas',
+      'Gomezsito', 'Rugby Teleco', 'Susez', 'Javito', 'Naval', 'Djokovic',
+      'Hyundai i20', 'Parking  ETSIT'
+    ],
+      'Humor Negro & Tabú': [
+      'Pedófilo', 'Auschwitz', 'Atentado', 'Aborto', 'Sida', 'Discapacitado', 
+      'Ceniza de abuela',  'Tener síndrome de Down', 'Ser gitano', 
+      'Incesto', 'Hijoputa'
+    ],
+    'Cuerpo & Fluidos (+18)': [
+      'Caca', 'Pedo',  'Meado',  'Coño', 'Polla', 'Huevo',
+      'Culo', 'Teta',  'Regla', 'Flujo vaginal', 'Esperma', 
+      'Leche', 'Eyaculación', 'Orificio', 'Clítoris', 'Glande', 
+      'Prepucio', 'Circuncisión', 'Selva genital','El orgasmo',
+      'La eyaculación femenina', 'El punto G', 'Kamasutra',
+      'Mueble roto'
+    ],
+    'Mundo Rural & Básico': [
+      'Tractor', 'Ordeñar', 'Ganado', 'Cerdos', 'Gallinas', 
+      'Cosecha',  'Pozo', 'Chorizo', 'Fiesta del pueblo', 
+      'Verbena', 'Peña', 'El cura', 'El alcalde', 
+      'El tonto del pueblo', 'Mear en la esquina', 'Peña'
+    ],
+    'Militar & Armas': [
+      'AK-47', 'Pistola', 'Escopeta', 'Francotirador',
+      'Cargador', 'Dinamita', 'Granada', 'Bomba',
+    ],
+    'Coches & Tuning (Callejero)': [
+      'Seat Ibiza', 'Porsche', 'Ferrari', 
+      'Radar', 'Multas', 'Fumar un porro en el coche', 
+      'Sexo en el coche', 'Aparcar mal', 'Robar el coche'
+    ],
+    'Medicina & Enfermedad (Gráfica)': [
+      'Médico', 'Enfermera', 'Hospital', 'Jeringuilla', 
+      'Inyección', 'Muletas', 'Silla de ruedas', 'Vómitos',
+      'Diarrea', 'Estreñimiento', 'Fisura anal', 'Piojos', 
+      'Sarna', 'Hongos', 'Infección', 'Coma etílico'
+    ],
+    'Ley & Crimen': [
+      'Policía', 'Guardia Civil', 'Denunciar', 'Detener',
+      'Esposas', 'Comisaría', 'Celda', 'Juzgado',
+      'Abogado', 'Procesado', 'Culpable', 'Inocente', 'Cárcel',
+      'Asesinato', 'Atraco', 'Ladrón', 'Carterista', 'Estafador', 
+      'Mafia', 'Sicario', 'Testigo'
+    ],
+    'Fetichismos': [
+      'Masoquismo', 'Voyerismo', 'Exhibicionismo','Zoofilia', 
+      'Ninfomanía', 'Cuero', 'Latex', 'Sumiso', 'Esclava', 
+      'Cadena', 'Antifaz', 'Dildo con IA', 'Pegging', 'Plug Anal',
+      'Misionero', 'Perrito', 'La cubana', '69', 'Sin condón'
+    ],
+    'Armas Blancas & Supervivencia': [
+      'Machete', 'Katana', 'Navaja', 'Garrote', 'Porra', 
+      'Ballesta', 'Mechero', 'Cazar', 'Fonsi táctico'
+    ],
+    'Economía & Estafa': [
+      'Pirámide', 'Phishing', 'Criptomoneda','Felix', 
+      'Quiebra','Evasión de impuestos', 'Paraíso fiscal', 
+      'Blanqueo de capitales', 'Chiringuito', 'Hacer negocio',
+      'Pagar en negro', 'Bitcoin'
+    ],
+    'Conspiranoia & Sectas': [
+      'Illuminati', 'Masonería', 'Terra plana', 'Reptilianos', 
+      'Microchip', 'Gran Hermano', 'Abuso sexual', 'Primado negativo',
+      'Mr Tartaria', 'Lavado de cerebro'
+    ],
+    'Cuerpo & Modificación': [
+      'Tatuaje', 'Piercing','Tercer pezon', 'Inyección de silicona', 
+      'Lifting brasileño (BBL)', 'Llenado de labios', 'Glúteos de silicona',
+      'Botox', 'Cirugía plástica', 'Rinoplastia', 'Anorexia', 
+      'Dismorfia muscular', 'Esteroides', 'Joan Pradells'
+    ],
+    'Peligro & Catástrofe': [
+      'Terremoto', 'Tsunami', 'Huracán', 'Tornado', 'Inundación', 
+      'Apocalipsis', 'Zombie', 'Pandemia', 'Virus', 'Contagio', 
+      'Cuarentena', 'Guerra civil', 'Guerra mundial', 
+      'Caníbal'
+    ],
+    'Submundos & Marginación': [
+      'Pobreza','Indigente', 'Carterista', 'Ladrón', 'Prostituta', 
+      'Gigoló', 'Yonqui', 'Alcohólico/a','Okupa','Guetto', 'Favela', 
+      'Tráfico de personas', 'Explotación infantil', 'Bandas latinas', 
+      'Gangster', 'Camello', 'Chulo'
     ],
   };
-
-  // Método para filtrar categorías
-  static List<String> getWordsForCategories(Set<String> selectedCategories) {
-    List<String> all = [];
-    categories.forEach((key, list) {
-      if (selectedCategories.contains(key)) {
-        all.addAll(list);
-      }
-    });
-    return all;
-  }
 }
 
 // ==========================================
-// PANTALLA 1: CONFIGURACIÓN (HOME)
+// PANTALLA 1: CONFIGURACIÓN (HOME) - ACTUALIZADA
 // ==========================================
 class SetupScreen extends StatefulWidget {
   const SetupScreen({super.key});
@@ -255,13 +400,27 @@ class _SetupScreenState extends State<SetupScreen> {
   double _players = 5;
   double _impostors = 1;
   
-  // Estado para las categorías seleccionadas (todas activas por defecto)
-  late Set<String> _selectedCategories;
+  // Estado para las categorías seleccionadas
+  Set<String> _selectedCategories = {};
+  // Combinación de categorías base + personalizadas
+  Map<String, List<String>> _allCategories = {}; 
 
   @override
   void initState() {
     super.initState();
-    _selectedCategories = Set.from(WordDatabase.categories.keys);
+    _loadData();
+  }
+
+  // Cargamos categorías base + las del teléfono
+  Future<void> _loadData() async {
+    Map<String, List<String>> custom = await DataManager.loadCustomCategories();
+    setState(() {
+      _allCategories = {...WordDatabase.categories, ...custom};
+      // Por defecto seleccionamos las base si no hay nada seleccionado
+      if (_selectedCategories.isEmpty) {
+         _selectedCategories = Set.from(WordDatabase.categories.keys);
+      }
+    });
   }
 
   void _toggleCategory(String category) {
@@ -272,6 +431,41 @@ class _SetupScreenState extends State<SetupScreen> {
         _selectedCategories.add(category);
       }
     });
+  }
+
+  // Función para borrar (Solo funciona en categorías custom)
+  void _deleteCustomCategory(String categoryName) async {
+    // Protección: No dejar borrar las base
+    if (WordDatabase.categories.containsKey(categoryName)) return;
+
+    bool confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: const Text("¿Borrar categoría?", style: TextStyle(color: Colors.white)),
+        content: Text("Se eliminará '$categoryName' y sus palabras para siempre.", style: const TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(child: const Text("CANCELAR"), onPressed: () => Navigator.pop(context, false)),
+          TextButton(child: const Text("BORRAR", style: TextStyle(color: Colors.red)), onPressed: () => Navigator.pop(context, true)),
+        ],
+      ),
+    ) ?? false;
+
+    if (confirm) {
+      await DataManager.deleteCategory(categoryName);
+      await _loadData(); // Recargar lista
+      setState(() {
+        _selectedCategories.remove(categoryName);
+      });
+    }
+  }
+
+  void _openCategoryCreator() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CategoryCreatorScreen()),
+    );
+    _loadData(); // Recargar al volver por si creó una nueva
   }
 
   void _startGame() {
@@ -285,7 +479,16 @@ class _SetupScreenState extends State<SetupScreen> {
       return;
     }
 
-    final validWords = WordDatabase.getWordsForCategories(_selectedCategories);
+    // Recolectar todas las palabras de las categorías activas
+    List<String> validWords = [];
+    _allCategories.forEach((key, list) {
+      if (_selectedCategories.contains(key)) {
+        validWords.addAll(list);
+      }
+    });
+
+    if (validWords.isEmpty) return;
+
     final randomWord = validWords[Random().nextInt(validWords.length)];
 
     int playerCount = _players.toInt();
@@ -312,6 +515,13 @@ class _SetupScreenState extends State<SetupScreen> {
     if (_impostors >= _players) _impostors = _players - 1;
 
     return Scaffold(
+      // Botón flotante para crear categorías
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openCategoryCreator,
+        backgroundColor: const Color(0xFFEC4899),
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text("CREAR TUYA", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
       body: BackgroundGradient(
         child: SafeArea(
           child: Column(
@@ -336,7 +546,7 @@ class _SetupScreenState extends State<SetupScreen> {
                       ),
                       const Center(
                         child: Text(
-                          "CONFIGURACIÓN",
+                          "EDICIÓN DEFINITIVA",
                           style: TextStyle(
                             fontSize: 14, 
                             fontWeight: FontWeight.w300, 
@@ -376,7 +586,7 @@ class _SetupScreenState extends State<SetupScreen> {
                       const SizedBox(height: 30),
                       
                       const Text(
-                        "CATEGORÍAS",
+                        "CATEGORÍAS DISPONIBLES",
                         style: TextStyle(color: Colors.white70, letterSpacing: 1.5, fontSize: 12),
                       ),
                       const SizedBox(height: 10),
@@ -385,22 +595,27 @@ class _SetupScreenState extends State<SetupScreen> {
                       Wrap(
                         spacing: 8.0,
                         runSpacing: 8.0,
-                        children: WordDatabase.categories.keys.map((category) {
+                        children: _allCategories.keys.map((category) {
                           final isSelected = _selectedCategories.contains(category);
+                          // Detectamos si es custom porque NO está en la base hardcoded
+                          final isCustom = !WordDatabase.categories.containsKey(category);
+
                           return GestureDetector(
                             onTap: () => _toggleCategory(category),
+                            // Si mantienes pulsado una custom, pregunta si borrar
+                            onLongPress: isCustom ? () => _deleteCustomCategory(category) : null,
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               decoration: BoxDecoration(
                                 color: isSelected 
                                     ? const Color(0xFF6366F1).withValues(alpha: 0.3) 
-                                    : Colors.white.withValues(alpha: 0.05),
+                                    : (isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05)),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color: isSelected 
                                       ? const Color(0xFF6366F1) 
-                                      : Colors.white.withValues(alpha: 0.1),
+                                      : (isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1)),
                                   width: 1.5,
                                 ),
                                 boxShadow: isSelected ? [
@@ -411,18 +626,29 @@ class _SetupScreenState extends State<SetupScreen> {
                                   )
                                 ] : [],
                               ),
-                              child: Text(
-                                category,
-                                style: TextStyle(
-                                  color: isSelected ? Colors.white : Colors.white60,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  fontSize: 13,
-                                ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (isCustom) 
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 5), 
+                                      child: Icon(Icons.star, size: 12, color: Color(0xFFEC4899))
+                                    ),
+                                  Text(
+                                    category,
+                                    style: TextStyle(
+                                      color: isSelected ? Colors.white : Colors.white60,
+                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
                         }).toList(),
                       ),
+                      const SizedBox(height: 80), // Espacio extra para el botón flotante
                     ],
                   ),
                 ),
@@ -509,6 +735,121 @@ class _SetupScreenState extends State<SetupScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ==========================================
+// PANTALLA: CREADOR DE CATEGORÍAS (NUEVA)
+// ==========================================
+class CategoryCreatorScreen extends StatefulWidget {
+  const CategoryCreatorScreen({super.key});
+
+  @override
+  State<CategoryCreatorScreen> createState() => _CategoryCreatorScreenState();
+}
+
+class _CategoryCreatorScreenState extends State<CategoryCreatorScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _wordController = TextEditingController();
+  final List<String> _words = [];
+
+  void _addWord() {
+    if (_wordController.text.trim().isNotEmpty) {
+      setState(() {
+        _words.add(_wordController.text.trim());
+        _wordController.clear();
+      });
+    }
+  }
+
+  void _saveCategory() async {
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ponle nombre a la categoría")));
+      return;
+    }
+    if (_words.length < 5) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Añade al menos 5 palabras")));
+      return;
+    }
+
+    await DataManager.saveCategory(_nameController.text.trim(), _words);
+    if (mounted) Navigator.pop(context); // Volver al home
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, title: const Text("Crear Pack Propio")),
+      body: BackgroundGradient(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: _nameController,
+                style: const TextStyle(color: Colors.white, fontSize: 20),
+                decoration: const InputDecoration(
+                  labelText: "Nombre del Pack (ej: Mi Pueblo)",
+                  labelStyle: TextStyle(color: Colors.white70),
+                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFEC4899))),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _wordController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: "Añadir palabra...",
+                        labelStyle: TextStyle(color: Colors.white70),
+                        border: OutlineInputBorder(),
+                      ),
+                      onSubmitted: (_) => _addWord(),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: _addWord,
+                    style: IconButton.styleFrom(backgroundColor: const Color(0xFF6366F1), padding: const EdgeInsets.all(12)),
+                    icon: const Icon(Icons.add, color: Colors.white),
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: GlassCard(
+                  child: _words.isEmpty 
+                    ? const Center(child: Text("Añade palabras para empezar", style: TextStyle(color: Colors.white30)))
+                    : ListView.builder(
+                        itemCount: _words.length,
+                        itemBuilder: (context, index) => ListTile(
+                          title: Text(_words[index], style: const TextStyle(color: Colors.white)),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.close, color: Colors.redAccent),
+                            onPressed: () => setState(() => _words.removeAt(index)),
+                          ),
+                        ),
+                      ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFEC4899)),
+                  onPressed: _saveCategory,
+                  child: const Text("GUARDAR PACK", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
