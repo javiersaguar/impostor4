@@ -200,45 +200,35 @@ class WordDatabase {
       'Aitana','Quevedo','Rosalía','BadBunny', 'Jordi ENP',
       'Rafa Nadal'
     ],
-      'Fútbol & Leyendas': [
-    // Jugadores históricos
-    'Pelé', 'Maradona', 'Johan Cruyff', 'Franz Beckenbauer', 'Alfredo Di Stéfano',
+    'Fútbol & Leyendas': [
+      'Messi', 'Cristiano Ronaldo', 'Mbappé', 'Haaland', 'Neymar',
+      'Vinicius Jr', 'Lewandowski', 'Balón de Oro', 'Champions League',
+      'Mundial', 'Fuera de Juego', 'VAR', 'Penalti', 'Tarjeta Roja',
+      'El Clásico', 'Chilena', 'Portero', 'Árbitro comprado',
+      'Real Madrid', 'Negreira',
+      'Pelé', 'Maradona', 'Johan Cruyff', 'Franz Beckenbauer', 'Alfredo Di Stéfano',
       'Ronaldo Nazário', 'Ronaldinho', 'Zidane', 'Paolo Maldini', 'Roberto Carlos',
       'George Best', 'Eusebio', 'Bobby Charlton', 'Xavi', 'Iniesta', 'Garrincha',
       'Marco van Basten', 'Gerd Müller', 'Romário', 'Batistuta', 'Totti', 'Henry',
       'Raúl González', 'Buffon', 'Iker Casillas',
-
-  // Jugadores actuales top
-      'Messi', 'Cristiano Ronaldo', 'Mbappé', 'Haaland', 'Neymar', 'Vinicius Jr',
-      'Lewandowski', 'Kane', 'Salah', 'Benzema', 'Modric', 'De Bruyne', 'Griezmann',
+      'Kane', 'Salah', 'Benzema', 'Modric', 'De Bruyne', 'Griezmann',
       'Kvaratskhelia', 'Rodri', 'Pedri', 'Gavi', 'Bellingham', 'Son Heung-min',
       'Bruno Fernandes', 'João Félix', 'Valverde', 'Odegaard', 'Ter Stegen',
       'Courtois', 'Enzo Fernández', 'Endrick', 'Lautaro Martínez',
-
-  // Equipos europeos
-      'Real Madrid', 'FC Barcelona', 'Atlético de Madrid', 'Sevilla FC',
+      'FC Barcelona', 'Atlético de Madrid', 'Sevilla FC',
       'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Arsenal',
       'Tottenham', 'Bayern de Múnich', 'Borussia Dortmund', 'PSG', 'Olympique Lyon',
       'Olympique de Marsella', 'Juventus', 'Inter de Milán', 'AC Milan', 'Roma',
       'Napoli', 'Ajax', 'PSV Eindhoven', 'Benfica', 'Porto',
-
-  // Equipos sudamericanos
       'Boca Juniors', 'River Plate', 'Flamengo', 'Palmeiras', 'Corinthians',
       'Santos FC', 'São Paulo', 'Colo-Colo', 'Peñarol', 'Nacional',
-
-  // Selecciones
       'España', 'Brasil', 'Argentina', 'Francia', 'Alemania', 'Italia', 'Inglaterra',
       'Portugal', 'Países Bajos', 'Uruguay', 'Croacia', 'Bélgica', 
       'Colombia', 'Chile', 'México',
-
-  // Términos del fútbol
-      'Balón de Oro', 'Champions League', 'Europa League', 'Mundial',
-      'Eurocopa', 'Copa América', 'Fuera de Juego', 'VAR', 'Penalti',
-      'Tarjeta Roja', 'Tarjeta Amarilla', 'Corner', 'Falta', 'Golazo',
-      'Hat-Trick', 'Chilena', 'Rabona', 'Tiki-Taka', 'Contraataque',
-      'Clásico', 'Derbi', 'Remontada', 'Portero', 'Extremo', 'Central',
-      'Delantero Centro', 'Árbitro comprado', 'Negreira'
-
+      'Europa League', 'Eurocopa', 'Copa América', 'Tarjeta Amarilla', 'Corner', 'Falta', 'Golazo',
+      'Hat-Trick', 'Rabona', 'Tiki-Taka', 'Contraataque',
+      'Clásico', 'Derbi', 'Remontada', 'Extremo', 'Central',
+      'Delantero Centro'
     ],
     'Políticos & Salseo': [
       'Feijóo', 'Ayuso', 'Trump', 'Biden', 'Putin',
@@ -384,6 +374,17 @@ class WordDatabase {
       'Gangster', 'Camello', 'Chulo'
     ],
   };
+
+  // Método para filtrar categorías
+  static List<String> getWordsForCategories(Set<String> selectedCategories) {
+    List<String> all = [];
+    categories.forEach((key, list) {
+      if (selectedCategories.contains(key)) {
+        all.addAll(list);
+      }
+    });
+    return all;
+  }
 }
 
 // ==========================================
@@ -515,176 +516,195 @@ class _SetupScreenState extends State<SetupScreen> {
     if (_impostors >= _players) _impostors = _players - 1;
 
     return Scaffold(
-      // Botón flotante para crear categorías
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openCategoryCreator,
-        backgroundColor: const Color(0xFFEC4899),
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text("CREAR TUYA", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
       body: BackgroundGradient(
         child: SafeArea(
-          child: Column(
+          // 2. USAMOS UN STACK PARA PODER PONER COSAS ENCIMA DE OTRAS
+          child: Stack(
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-                      const Center(
-                        child: Text(
-                          "EL IMPOSTOR",
-                          style: TextStyle(
-                            fontSize: 42, 
-                            fontWeight: FontWeight.w900, 
-                            color: Colors.white,
-                            letterSpacing: 3,
-                          ),
-                        ),
-                      ),
-                      const Center(
-                        child: Text(
-                          "EDICIÓN DEFINITIVA",
-                          style: TextStyle(
-                            fontSize: 14, 
-                            fontWeight: FontWeight.w300, 
-                            color: Color(0xFF6366F1),
-                            letterSpacing: 6,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      
-                      // Configuración de Jugadores
-                      GlassCard(
-                        child: Column(
-                          children: [
-                            _buildSliderRow(
-                              title: "JUGADORES",
-                              value: _players,
-                              min: 3, max: 20,
-                              accentColor: const Color(0xFF6366F1),
-                              onChanged: (v) => setState(() => _players = v),
+              // --- CAPA 1: EL CONTENIDO PRINCIPAL ---
+              Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 60), // ESPACIO PARA QUE NO CHOQUE CON EL BOTÓN SUPERIOR
+                          const Center(
+                            child: Text(
+                              "EL IMPOSTOR",
+                              style: TextStyle(
+                                fontSize: 42, 
+                                fontWeight: FontWeight.w900, 
+                                color: Colors.white,
+                                letterSpacing: 3,
+                              ),
                             ),
-                            const SizedBox(height: 20),
-                            Divider(color: Colors.white.withValues(alpha: 0.1)),
-                            const SizedBox(height: 20),
-                            _buildSliderRow(
-                              title: "IMPOSTORES",
-                              value: _impostors,
-                              min: 1, 
-                              max: (_players - 1 > 1) ? _players - 1 : 1,
-                              accentColor: const Color(0xFFEC4899),
-                              onChanged: (v) => setState(() => _impostors = v),
+                          ),
+                          const Center(
+                            child: Text(
+                              "EDICIÓN DEFINITIVA",
+                              style: TextStyle(
+                                fontSize: 14, 
+                                fontWeight: FontWeight.w300, 
+                                color: Color(0xFF6366F1),
+                                letterSpacing: 6,
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 30),
-                      
-                      const Text(
-                        "CATEGORÍAS DISPONIBLES",
-                        style: TextStyle(color: Colors.white70, letterSpacing: 1.5, fontSize: 12),
-                      ),
-                      const SizedBox(height: 10),
-                      
-                      // Selector de Categorías (Chips)
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 8.0,
-                        children: _allCategories.keys.map((category) {
-                          final isSelected = _selectedCategories.contains(category);
-                          // Detectamos si es custom porque NO está en la base hardcoded
-                          final isCustom = !WordDatabase.categories.containsKey(category);
-
-                          return GestureDetector(
-                            onTap: () => _toggleCategory(category),
-                            // Si mantienes pulsado una custom, pregunta si borrar
-                            onLongPress: isCustom ? () => _deleteCustomCategory(category) : null,
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: isSelected 
-                                    ? const Color(0xFF6366F1).withValues(alpha: 0.3) 
-                                    : (isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05)),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: isSelected 
-                                      ? const Color(0xFF6366F1) 
-                                      : (isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1)),
-                                  width: 1.5,
+                          ),
+                          const SizedBox(height: 40),
+                          
+                          // Configuración de Jugadores
+                          GlassCard(
+                            child: Column(
+                              children: [
+                                _buildSliderRow(
+                                  title: "JUGADORES",
+                                  value: _players,
+                                  min: 3, max: 20,
+                                  accentColor: const Color(0xFF6366F1),
+                                  onChanged: (v) => setState(() => _players = v),
                                 ),
-                                boxShadow: isSelected ? [
-                                  BoxShadow(
-                                    color: const Color(0xFF6366F1).withValues(alpha: 0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  )
-                                ] : [],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (isCustom) 
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 5), 
-                                      child: Icon(Icons.star, size: 12, color: Color(0xFFEC4899))
-                                    ),
-                                  Text(
-                                    category,
-                                    style: TextStyle(
-                                      color: isSelected ? Colors.white : Colors.white60,
-                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                const SizedBox(height: 20),
+                                Divider(color: Colors.white.withValues(alpha: 0.1)),
+                                const SizedBox(height: 20),
+                                _buildSliderRow(
+                                  title: "IMPOSTORES",
+                                  value: _impostors,
+                                  min: 1, 
+                                  max: (_players - 1 > 1) ? _players - 1 : 1,
+                                  accentColor: const Color(0xFFEC4899),
+                                  onChanged: (v) => setState(() => _impostors = v),
+                                ),
+                              ],
                             ),
-                          );
-                        }).toList(),
+                          ),
+
+                          const SizedBox(height: 30),
+                          
+                          const Text(
+                            "CATEGORÍAS DISPONIBLES",
+                            style: TextStyle(color: Colors.white70, letterSpacing: 1.5, fontSize: 12),
+                          ),
+                          const SizedBox(height: 10),
+                          
+                          // Selector de Categorías (Chips)
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: _allCategories.keys.map((category) {
+                              final isSelected = _selectedCategories.contains(category);
+                              // Detectamos si es custom porque NO está en la base hardcoded
+                              final isCustom = !WordDatabase.categories.containsKey(category);
+
+                              return GestureDetector(
+                                onTap: () => _toggleCategory(category),
+                                // Si mantienes pulsado una custom, pregunta si borrar
+                                onLongPress: isCustom ? () => _deleteCustomCategory(category) : null,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: isSelected 
+                                        ? const Color(0xFF6366F1).withValues(alpha: 0.3) 
+                                        : (isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05)),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: isSelected 
+                                          ? const Color(0xFF6366F1) 
+                                          : (isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1)),
+                                      width: 1.5,
+                                    ),
+                                    boxShadow: isSelected ? [
+                                      BoxShadow(
+                                        color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      )
+                                    ] : [],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (isCustom) 
+                                        const Padding(
+                                          padding: EdgeInsets.only(right: 5), 
+                                          child: Icon(Icons.star, size: 12, color: Color(0xFFEC4899))
+                                        ),
+                                      Text(
+                                        category,
+                                        style: TextStyle(
+                                          color: isSelected ? Colors.white : Colors.white60,
+                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
-                      const SizedBox(height: 80), // Espacio extra para el botón flotante
-                    ],
+                    ),
                   ),
-                ),
+                  
+                  // Botón Iniciar (Fijo abajo)
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 65,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: LinearGradient(
+                          colors: _selectedCategories.isNotEmpty 
+                            ? [const Color(0xFF6366F1), const Color(0xFFEC4899)]
+                            : [Colors.grey, Colors.grey.shade700],
+                        ),
+                        boxShadow: _selectedCategories.isNotEmpty ? [
+                          BoxShadow(
+                            color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          )
+                        ] : [],
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        onPressed: _startGame,
+                        child: const Text(
+                          "INICIAR PARTIDA", 
+                          style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              
-              // Botón Iniciar (Fijo abajo)
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Container(
-                  width: double.infinity,
-                  height: 65,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                      colors: _selectedCategories.isNotEmpty 
-                        ? [const Color(0xFF6366F1), const Color(0xFFEC4899)]
-                        : [Colors.grey, Colors.grey.shade700],
-                    ),
-                    boxShadow: _selectedCategories.isNotEmpty ? [
-                      BoxShadow(
-                        color: const Color(0xFF6366F1).withValues(alpha: 0.4),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      )
-                    ] : [],
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    onPressed: _startGame,
-                    child: const Text(
-                      "INICIAR PARTIDA", 
-                      style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+
+              // --- CAPA 2: EL BOTÓN DE CREAR (FLOTANDO ARRIBA A LA DERECHA) ---
+              Positioned(
+                top: 10,
+                right: 20,
+                child: SizedBox(
+                  height: 45, // Un poco más pequeño para que sea sutil
+                  child: FloatingActionButton.extended(
+                    heroTag: "btn_crear", // Etiqueta necesaria para evitar conflictos
+                    onPressed: _openCategoryCreator,
+                    backgroundColor: const Color(0xFFEC4899),
+                    elevation: 10,
+                    icon: const Icon(Icons.add, color: Colors.white, size: 20),
+                    label: const Text(
+                      "CREAR CATEGORÍA (PACK)", 
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)
                     ),
                   ),
                 ),
